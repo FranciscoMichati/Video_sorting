@@ -42,8 +42,11 @@ def make_video(frame_dir: str, output_path:str, fps:int):
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Specify the video codec
     video_writer = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
 
-    # Write the frames to the video
-    frame_files = sorted(os.listdir(frame_dir))
+        # Write the frames to the video
+    frame_files = sorted(
+        [file for file in os.listdir(frame_dir) if file.endswith('.jpg') and file.startswith('frame')],
+        key=lambda x: int(x[5:-4])
+    )
     for frame_file in frame_files:
         frame_path = os.path.join(frame_dir, frame_file)
         frame = cv2.imread(frame_path)
@@ -75,6 +78,7 @@ for _ in range(len(video)):  #Main Loop
         plt.imsave(f"./frames_sorted/frame{_}.jpg",sort_video[min_index],cmap='gray')
 
     for j, frame2 in enumerate(video):
+        print(j,min_index,used_indexes)
         if j==min_index or j in used_indexes:
             error_list.append(np.Infinity)
         else:
@@ -92,7 +96,7 @@ for _ in range(len(video)):  #Main Loop
 #Make video
 frames_folder_path="./frames_sorted"
 video_ouput_path="./frames_sorted/reconstructed_video.mp4"
-fps=15
+fps=30
 make_video(frames_folder_path,video_ouput_path,fps)
 
 
